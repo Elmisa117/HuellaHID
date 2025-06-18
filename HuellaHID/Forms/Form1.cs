@@ -6,6 +6,7 @@ using HuellaHID.Models;
 using HuellaHID.Services;
 using System;
 using System.IO;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace HuellaHID.Forms
@@ -112,9 +113,15 @@ namespace HuellaHID.Forms
             };
 
             btnEnviarHuella.Enabled = false;
-            lblEstado.Text = "Enviando huella...";
-            bool result = await ApiService.EnviarHuellaAsync(request);
-            lblEstado.Text = result ? "Huella registrada correctamente" : "Error al registrar huella";
+            lblEstado.Text = "Guardando huella...";
+
+            bool dbOk = await DatabaseService.GuardarHuellaAsync(pacienteid, mano, dedo, bytes);
+            bool apiOk = await ApiService.EnviarHuellaAsync(request);
+
+            if (dbOk && apiOk)
+                lblEstado.Text = "Huella registrada correctamente";
+            else
+                lblEstado.Text = "Error al registrar huella";
         }
 
         private void btnIniciarCaptura_Click(object sender, EventArgs e)
