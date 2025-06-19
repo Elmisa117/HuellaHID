@@ -19,7 +19,8 @@ namespace HuellaHID.Services
             {
                 using var conn = new NpgsqlConnection(connectionString);
                 await conn.OpenAsync();
-                using var cmd = new NpgsqlCommand("INSERT INTO huellas(paciente_id, mano, dedo, template) VALUES (@p1,@p2,@p3,@p4)", conn);
+                // La tabla real en la base es 'huellasdactilares'
+                using var cmd = new NpgsqlCommand("INSERT INTO huellasdactilares(paciente_id, mano, dedo, template) VALUES (@p1,@p2,@p3,@p4)", conn);
                 cmd.Parameters.AddWithValue("@p1", pacienteId);
                 cmd.Parameters.AddWithValue("@p2", mano);
                 cmd.Parameters.AddWithValue("@p3", dedo);
@@ -41,7 +42,8 @@ namespace HuellaHID.Services
             {
                 using var conn = new NpgsqlConnection(connectionString);
                 await conn.OpenAsync();
-                using var cmd = new NpgsqlCommand("SELECT h.paciente_id, p.nombre, h.mano, h.dedo, h.template FROM huellas h JOIN pacientes p ON p.id = h.paciente_id", conn);
+                // Leemos desde la tabla 'huellasdactilares'
+                using var cmd = new NpgsqlCommand("SELECT h.paciente_id, p.nombre, h.mano, h.dedo, h.template FROM huellasdactilares h JOIN pacientes p ON p.id = h.paciente_id", conn);
                 using var reader = await cmd.ExecuteReaderAsync();
                 while (await reader.ReadAsync())
                 {
